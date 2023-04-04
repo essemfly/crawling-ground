@@ -75,6 +75,7 @@ func CrawlSmartStoreDetail(storeUrl string) *StoreInfo {
 	c := colly.NewCollector()
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36")
+		r.Headers.Set("Cookie", "SBC=b85971e8-6313-4433-9b40-85932ee4d5be")
 	})
 
 	storeInfo := &StoreInfo{}
@@ -105,12 +106,11 @@ func CrawlSmartStoreDetail(storeUrl string) *StoreInfo {
 		storeInfo.Url = storeUrl + "/profile"
 	})
 
-	c.Visit(storeUrl + "/profile")
-
-	log.Println("StoreName ", storeInfo.Email)
-	log.Println("Phone ", storeInfo.CustomerCenterPhone)
-	log.Println("Email ", storeInfo.Email)
-	log.Println("Url ", storeInfo.Url)
+	profileUrl := storeUrl + "/profile"
+	err := c.Visit(profileUrl)
+	if err != nil {
+		log.Println("ERROR on crawling detail: ", err)
+	}
 
 	return storeInfo
 }
